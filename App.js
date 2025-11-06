@@ -8,7 +8,10 @@ import { auth } from "./firebaseConfig";
 import LoginScreen from "./screens/LoginScreen";
 import HomeScreen from "./screens/HomeScreen";
 import ProfileScreen from "./screens/ProfileScreen";
+import EditProfileScreen from "./screens/EditProfileScreen";
 import CameraScreen from "./screens/CameraScreen";
+import ReelsScreen from "./screens/ReelsScreen";
+import { UserProvider } from "./contexts/UserContext"; // Добавьте этот импорт
 
 const Stack = createStackNavigator();
 
@@ -41,26 +44,82 @@ export default function App() {
   if (initializing) return null;
 
   return (
-    <PaperProvider>
-      <NavigationContainer theme={AppTheme}>
-        <Stack.Navigator
-          screenOptions={{
-            headerStyle: { backgroundColor: AppTheme.colors.card },
-            headerTintColor: AppTheme.colors.text,
-            headerTitleStyle: { fontWeight: "600" },
-          }}
-        >
-          {user ? (
-            <>
-              <Stack.Screen name="Home" component={HomeScreen} options={{ title: "Лента" }} />
-              <Stack.Screen name="Profile" component={ProfileScreen} options={{ title: "Профиль" }} />
-              <Stack.Screen name="Camera" component={CameraScreen} options={{ title: "Камера" }} />
-            </>
-          ) : (
-            <Stack.Screen name="Login" component={LoginScreen} options={{ headerShown: false }} />
-          )}
-        </Stack.Navigator>
-      </NavigationContainer>
-    </PaperProvider>
+    <UserProvider> {/* Оберните все в UserProvider */}
+      <PaperProvider>
+        <NavigationContainer theme={AppTheme}>
+          <Stack.Navigator
+            screenOptions={{
+              headerStyle: { 
+                backgroundColor: AppTheme.colors.card,
+                elevation: 0, // Убираем тень на Android
+                shadowOpacity: 0, // Убираем тень на iOS
+                borderBottomWidth: 1,
+                borderBottomColor: "#dbdbdb"
+              },
+              headerTintColor: AppTheme.colors.text,
+              headerTitleStyle: { 
+                fontWeight: "600",
+                fontSize: 17
+              },
+              headerBackTitle: "Назад", // Для iOS
+            }}
+          >
+            {user ? (
+              <>
+                <Stack.Screen 
+                  name="Home" 
+                  component={HomeScreen} 
+                  options={{ 
+                    title: "Instagram",
+                    headerTitleStyle: {
+                      fontSize: 28,
+                      marginBottom: 4,
+                      fontWeight: "700",
+                    }
+                  }} 
+                />
+                <Stack.Screen 
+                  name="Profile" 
+                  component={ProfileScreen} 
+                  options={{ 
+                    title: "Профиль",
+                    headerBackTitle: " " // Пустой текст для кнопки назад
+                  }} 
+                />
+                <Stack.Screen 
+                  name="EditProfile" 
+                  component={EditProfileScreen} 
+                  options={{ 
+                    title: "Редактировать профиль",
+                    headerBackTitle: " " // Пустой текст для кнопки назад
+                  }} 
+                />
+                <Stack.Screen 
+                  name="Camera" 
+                  component={CameraScreen} 
+                  options={{ 
+                    title: "Камера",
+                    headerBackTitle: " " // Пустой текст для кнопки назад
+                  }} 
+                />
+                <Stack.Screen 
+                  name="Reels" 
+                  component={ReelsScreen} 
+                  options={{ 
+                    headerShown: false // Скрываем хедер для полноэкранного вида Reels
+                  }} 
+                />
+              </>
+            ) : (
+              <Stack.Screen 
+                name="Login" 
+                component={LoginScreen} 
+                options={{ headerShown: false }} 
+              />
+            )}
+          </Stack.Navigator>
+        </NavigationContainer>
+      </PaperProvider>
+    </UserProvider>
   );
 }
